@@ -2,6 +2,7 @@ import openai
 from typing import List, Dict, Any
 
 from config import settings
+from db import db
 
 class LLM:
     def set_api_key(self, api_key: str) -> None:
@@ -19,10 +20,21 @@ class LLM:
 
     def generate(self, messages: List[Dict[str, Any]]) -> str:
         """NOTE : llm 답변 받기 """
+        # 1) RAG - context 찾기
+        query = messages[-1]['content']
+        context = "\n".join(db.get_relevant_context(query)[0])
+        messages[-1]["content"] = f"{settings.prompt.RAG_PROMPT}\nContext: {context}\nQuery: {messages[-1]['content']}"
+
+        # 2) LLM 응답
         response = openai.ChatCompletion.create(
             model=settings.llm.GPT_MODEL,
             messages=messages
         )
+
+        # 3) 기존 메세지 복구 (RAG context 추가 전)
+        messages[-1]["content"] = query
+        
+        # 4) response
         return response.choices[0].message["content"]
 
 llm = LLM()
