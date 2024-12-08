@@ -15,11 +15,16 @@ with st.sidebar:
 
 # 최초 메세지 출력
 if "messages" not in st.session_state:
-    st.session_state.messages = [{"role": "assistant", "content": "안녕하세요! 스마트스토어 고객센터입니다."}]
+    st.session_state.messages = [
+        {"role": "system", "content": settings.prompt.SYSTEM_PROMPT},
+        {"role": "assistant", "content": "안녕하세요! 스마트스토어 고객센터입니다."}
+    ]
 
 # 메세지 전체 출력
 for msg in st.session_state.messages:
-    st.chat_message(msg["role"]).write(msg["content"])
+    if msg["role"] != "system":
+        st.chat_message(msg["role"]).write(msg["content"])
+
 
 # 유저 쿼리
 if prompt := st.chat_input():
