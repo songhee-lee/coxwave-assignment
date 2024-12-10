@@ -1,5 +1,6 @@
 import streamlit as st
 from bson.objectid import ObjectId
+import time 
 
 from utils import send_api
 
@@ -38,4 +39,12 @@ if prompt := st.chat_input("궁금한 점을 입력해주세요."):
             generated_text = response["error"]
 
         st.session_state.messages.append({"role": "assistant", "content": generated_text})
-        st.chat_message("assistant").write(generated_text)
+
+        # 스트리밍 출력
+        output_area = st.empty()    # 스트리밍 출력을 위한 공간 생성 
+        with st.chat_message("assistant") :
+            current_text = ""
+            for char in generated_text :
+                current_text += char 
+                output_area.markdown(current_text) 
+                time.sleep(0.05)
