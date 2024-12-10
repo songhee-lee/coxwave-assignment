@@ -41,8 +41,9 @@ if prompt := st.chat_input("궁금한 점을 입력해주세요."):
         st.session_state.messages.append({"role": "assistant", "content": generated_text})
 
         # 스트리밍 출력
-        output_area = st.empty()    # 스트리밍 출력을 위한 공간 생성 
         with st.chat_message("assistant") :
+            output_area = st.empty()    # 스트리밍 출력을 위한 공간 생성 
+            
             current_text = ""
             for char in generated_text :
                 current_text += char 
