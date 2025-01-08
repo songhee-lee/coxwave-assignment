@@ -11,8 +11,10 @@ def send_api(data, path) :
     }
     
     try :
-        response = requests.post(url, headers=headers, json=data)
-        return response.json()
+        #response = requests.post(url, headers=headers, json=data)
+        #return response.json()
+        return requests.post(url, headers=headers, json=data, stream=True)
+
     except Exception as e :
         return {"generated_text" : e}
 

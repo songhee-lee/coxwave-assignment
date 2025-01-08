@@ -42,6 +42,7 @@ class DataBase :
             print(f"Load {collection_name}...")
         
         except Exception :
+            print(f"Create {collection_name}...")
             self.collection = client.create_collection(collection_name)
             collection_info = chromadb_settings.get_collection_info(collection_name)
 
@@ -52,41 +53,46 @@ class DataBase :
                 self.add_to_chromadb(collection_data["documents"], collection_data["embeddings"], collection_data["ids"]) 
             
             # 새로운 collection에 임베딩 데이터 추가하기
-            else :
-                # 파일 경로에서 데이터 불러오기
-                data = self.load_data(collection_info.FILE_PATH)
-                if not data :
-                    return False
+            print(f"Load the data from '{collection_info.FILE_PATH}'")
+            
+            # 파일 경로에서 데이터 불러오기
+            data = self.load_data(collection_info.FILE_PATH)
+            
+            documents = []
+            embeddings = []
+            ids = []
+            
+            dir_path = f"{chromadb_settings.CHROMADB_PATH}/document"
+            if not os.path.exists(dir_path) :
+                os.mkdir(dir_path)
+                print(f"Make dir '{dir_path}'")
                 
-                documents = []
-                embeddings = []
-                ids = []
-                
-                for idx, (key, value) in enumerate(data.items()):
-                    # document file 확인하기 (기존 임베딩)
-                    file_path = f"{chromadb_settings.CHROMADB_PATH}/document/document_{idx}.pkl"
-                    doc = self.load_data(file_path)
-                    if doc :
-                        text = doc["text"]
-                        embedding = doc["embedding"]
-                    # 새롭게 임베딩 진행
-                    else :
-                        text = make_document(key, value)
-                        embedding = text_to_embedding(text)
+            for idx, (key, value) in enumerate(data.items()):
+                # document file 확인하기 (기존 임베딩)
+                file_path = f"{chromadb_settings.CHROMADB_PATH}/document/document_{idx}.pkl"
+                    
+                doc = self.load_data(file_path)
+                if doc :
+                    text = doc["text"]
+                    embedding = doc["embedding"]
+                # 새롭게 임베딩 진행
+                else :
+                    text = make_document(key, value)
+                    embedding = text_to_embedding(text)
 
-                        with open(file_path, "wb") as f :
-                            pickle.dump({"text" : text, "embedding" : embedding}, f)
+                    with open(file_path, "wb") as f :
+                        pickle.dump({"text" : text, "embedding" : embedding}, f)
 
-                    documents.append(text)
-                    embeddings.append(embedding)
-                    ids.append(str(idx))
+                documents.append(text)
+                embeddings.append(embedding)
+                ids.append(str(idx))
 
-                print("새로운 DB 생성...")
-                self.add_to_chromadb(documents, embeddings, ids)
+            print("새로운 DB 생성...")
+            self.add_to_chromadb(documents, embeddings, ids)
 
-                # DB 저장하기
-                with open(collection_info.COLLECTION_PATH, "wb") as f:
-                    pickle.dump({"documents" : documents, "embeddings" : embeddings, "ids":ids}, f)
+            # DB 저장하기
+            with open(collection_info.COLLECTION_PATH, "wb") as f:
+                pickle.dump({"documents" : documents, "embeddings" : embeddings, "ids":ids}, f)
 
     def get_relevant_context(self, collection_name, query: str) -> List[str]:
         """

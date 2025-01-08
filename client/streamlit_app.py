@@ -32,20 +32,18 @@ if prompt := st.chat_input("궁금한 점을 입력해주세요."):
             "messages" : st.session_state.messages,
         }
 
-        response = send_api(data, "/api/chat")
-        if "generated_text" in response :
-            generated_text = response["generated_text"]
-        else :
-            generated_text = response["error"]
+        try : 
+            response = send_api(data, "/api/chat_stream")
+            response.raise_for_status() # HTTP Error Check
 
-        st.session_state.messages.append({"role": "assistant", "content": generated_text})
-
-        # 스트리밍 출력
-        with st.chat_message("assistant") :
-            output_area = st.empty()    # 스트리밍 출력을 위한 공간 생성 
-            
-            current_text = ""
-            for char in generated_text :
-                current_text += char 
-                output_area.markdown(current_text) 
-                time.sleep(0.05)
+            # 스트리밍 출력
+            with st.chat_message("assistant") :
+                output_area = st.empty()    # 스트리밍 출력을 위한 공간 생성 
+                current_text = ""
+                for chunk in response.iter_content(chunk_size=1024) :
+                    current_text += chunk.decode("utf-8")
+                    output_area.markdown(current_text)
+        except Exception as e :
+            st.error(f"Request failed : {e}")
+            current_text = f"Error : {str(e)}"
+        st.session_state.messages.append({"role": "assistant", "content": current_text})

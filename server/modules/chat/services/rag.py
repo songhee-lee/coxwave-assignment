@@ -19,10 +19,11 @@ def organize_messages(collection_name, messages: List[Dict[str, Any]]) -> List[D
     return messages
     
 
-def get_chat_response(collection_name, messages: List[Dict[str, Any]]) -> str:
+def get_chat_response(collection_name, messages: List[Dict[str, Any]], stream=True) -> str:
         
         # 1) 메세지 확인
         messages = organize_messages(collection_name, messages)
 
         # 2) LLM 답변
-        return openai_llm.generate(messages)
+        if stream :
+            return openai_llm.generate_streaming(messages)

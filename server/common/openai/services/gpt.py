@@ -1,5 +1,6 @@
 import openai
 from typing import List, Dict, Any
+import asyncio
 
 from server.common.openai.config import openai_settings
 
@@ -25,5 +26,19 @@ class LLM:
         )
 
         return response.choices[0].message["content"]
+
+    async def generate_streaming(self, messages: List[Dict[str, Any]]) -> str:
+        """NOTE : llm 답변 받기 """
+        response = openai.ChatCompletion.create(
+            model=openai_settings.OPENAI_LLM_MODEL,
+            messages=messages,
+            stream=True
+        )
+
+        for chunk in response :
+            content = chunk["choices"][0].delta.get("content","")
+            if content :
+                yield content
+                await asyncio.sleep(0.1)
 
 openai_llm = LLM()
