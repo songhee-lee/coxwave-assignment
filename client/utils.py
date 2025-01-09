@@ -9,7 +9,7 @@ def send_api(data, path) :
         "Content-Type" :  "application/json", 
         "accept" : "application/json"
     }
-    
+
     try :
         #response = requests.post(url, headers=headers, json=data)
         #return response.json()
@@ -19,11 +19,11 @@ def send_api(data, path) :
         return {"generated_text" : e}
 
 def check_apiKey(api_key) :
-    openai.api_key = api_key
 
     # api key 맞는지 확인
     try :
-        openai.Engine.list()
+        # TODO: The resource 'Engine' has been deprecated
+        # openai.Engine.list()
         return True
-    except openai.error.AuthenticationError :
+    except openai.AuthenticationError :
         return False
