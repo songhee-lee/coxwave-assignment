@@ -1,4 +1,3 @@
-import json
 from typing import Dict, Any
 
 def format_response(response : Dict[str, Any]) -> str :
@@ -9,5 +8,5 @@ def format_response(response : Dict[str, Any]) -> str :
     questions = "".join([f"- {q}\n" for q in questions])
     
     # 최종 문자열
-    formatted_response = f"""{answer}\n\n추가로 도움이 필요하신가요?\n{questions}"""
+    formatted_response = f"""{answer}\n\n추가로 어떤 도움이 필요하신가요?\n{questions}"""
     return formatted_response

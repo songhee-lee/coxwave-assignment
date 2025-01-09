@@ -1,12 +1,11 @@
 import openai
 from openai import OpenAI
-import json
 from typing import List, Dict, Any
 import asyncio
 
-from server.common.openai.config import openai_settings
-from server.common.openai.schemas.gpt_answer import StructuredOutput
-from server.common.openai.utils.gpt_answer import format_response
+from server.llm.openai.config import openai_settings
+from server.llm.openai.schemas.gpt_answer import StructuredOutput
+from server.llm.openai.utils.gpt_answer import format_response
 
 
 client = OpenAI(api_key=openai_settings.OPENAI_API_KEY)
@@ -50,7 +49,7 @@ class LLM:
             messages=messages,
             response_format=StructuredOutput,
         )
-        print(response.choices[0].message.parsed)
+
         response = format_response(response.choices[0].message.parsed)
         
         for chunk in response :

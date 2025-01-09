@@ -1,8 +1,8 @@
 from openai import OpenAI
 from typing import List
 
-from server.common.openai.config import openai_settings
-from server.common.openai.utils.tokenizer import openai_tokenizer
+from server.llm.openai.config import openai_settings
+from server.llm.openai.utils.tokenizer import openai_tokenizer
 
 def text_to_embedding(text: str) -> List[float]:
     """

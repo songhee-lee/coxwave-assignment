@@ -4,8 +4,8 @@ import chromadb
 from typing import List
 
 from server.library.naver_store_faq import make_document
-from server.common.chromadb.config import chromadb_settings
-from server.common.openai.services.embedding import text_to_embedding
+from server.db.chromadb.config import chromadb_settings
+from server.llm.openai.services.embedding import text_to_embedding
 
 class DataBase :
     """

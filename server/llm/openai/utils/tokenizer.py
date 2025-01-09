@@ -1,7 +1,7 @@
 from typing import List, Dict
 import tiktoken
 
-from server.common.openai.config import openai_settings
+from server.llm.openai.config import openai_settings
 
 class Tokenizer :
     

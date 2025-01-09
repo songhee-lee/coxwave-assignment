@@ -1,8 +1,8 @@
 from typing import List, Dict, Any
 
 from server.modules.chat.config import chat_settings
-from server.common.chromadb.services.database import chroma_db
-from server.common.openai.services.gpt import openai_llm
+from server.db.chromadb.services.database import chroma_db
+from server.llm.openai.services.gpt import openai_llm
 
 def organize_messages(collection_name, messages: List[Dict[str, Any]]) -> List[Dict[str, Any]]:
     """NOTE : 사용자 메세지에 시스템 메세지와 RAG 후 context 추가하기 """
