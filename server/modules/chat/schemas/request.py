@@ -1,7 +1,9 @@
+from typing import Any, Dict, List
+
 from pydantic import BaseModel
-from typing import List, Dict, Any
+
 
 class ChatRequest(BaseModel):
-    service : str
-    taskId : str
+    service: str
+    task_id: str
     messages: List[Dict[str, Any]]

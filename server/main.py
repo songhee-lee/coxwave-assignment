@@ -1,12 +1,9 @@
-from fastapi import FastAPI
 import uvicorn
+from fastapi import FastAPI
 
 from server.router import chat
 
-app = FastAPI(
-    title="RAG Chatbot",
-    debug=True
-)
+app = FastAPI(title="RAG Chatbot", debug=True)
 
 app.include_router(chat.router, prefix="/api")
 
