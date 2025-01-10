@@ -16,7 +16,7 @@ class NaverStoreFAQSettings :
         self.FILE_PATH = f"{db_data_path}/{self.NAVER_STORE_FAQ_COLLECTION_NAME}.pkl"
         self.COLLECTION_PATH = f"{db_collection_path}/{self.NAVER_STORE_FAQ_COLLECTION_NAME}.pkl"
 
-class DatabaseSettings :
+class ChromaDBSettings :
     CHROMADB_PATH : str = os.getenv("CHROMADB_PATH")
     DB_DATA_PATH : str = os.getenv("DB_DATA_PATH")
     DB_COLLECTION_PATH : str = os.getenv("DB_COLLECTION_PATH")
@@ -39,5 +39,3 @@ class DatabaseSettings :
 
     def get_collection_info(self, collection_name : str) -> Dict[str, Any] :
         return self.collections.get(collection_name.lower(), None)
-
-chromadb_settings = DatabaseSettings()

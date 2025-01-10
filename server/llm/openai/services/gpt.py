@@ -3,13 +3,19 @@ from openai import OpenAI
 from typing import List, Dict, Any
 import asyncio
 
-from server.llm.openai.config import openai_settings
+from server.llm.openai.config import OpenAISettings
 from server.llm.openai.schemas.gpt_answer import StructuredOutput
 from server.llm.openai.utils.gpt_answer import format_response
 
+class OpenAILLM:
+    def __init__(self, 
+        api_key : str,
+        settings : OpenAISettings,
+        
+    ) :
+        self.client = OpenAI(api_key=api_key)
+        self.settings = settings
 
-client = OpenAI(api_key=openai_settings.OPENAI_API_KEY)
-class LLM:
     def set_api_key(self, api_key: str) -> bool:
         """NOTE : 올바른 api key 인지 확인하고, api key 세팅하기 """
         # 1) api 세팅
@@ -25,8 +31,10 @@ class LLM:
 
     def generate(self, messages: List[Dict[str, Any]]) -> str:
         """NOTE : llm 답변 받기 """
-        response = client.chat.completions.create(model=openai_settings.OPENAI_LLM_MODEL,
-        messages=messages)
+        response = self.client.chat.completions.create(
+            model=self.settings.OPENAI_LLM_MODEL,
+            messages=messages
+        )
 
         return response.choices[0].message.content
 
@@ -44,8 +52,8 @@ class LLM:
         #             yield formatted_response
         #             #yield make_answer(chunk.content)
         #         await asyncio.sleep(0.1)
-        response = client.beta.chat.completions.parse(
-            model=openai_settings.OPENAI_LLM_MODEL,
+        response = self.client.beta.chat.completions.parse(
+            model=self.settings.OPENAI_LLM_MODEL,
             messages=messages,
             response_format=StructuredOutput,
         )
@@ -55,5 +63,3 @@ class LLM:
         for chunk in response :
             yield chunk
             await asyncio.sleep(0.1)
-
-openai_llm = LLM()

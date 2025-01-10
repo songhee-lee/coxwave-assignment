@@ -1,12 +1,11 @@
 from typing import List, Dict
 import tiktoken
 
-from server.llm.openai.config import openai_settings
-
-class Tokenizer :
+class OpenAITokenizer :
     
-    def __init__(self) :
-        self.tokenizer = tiktoken.get_encoding(openai_settings.OPENAI_TOKENIZER_MODEL)
+    def __init__(self, settings) :
+        self.settings = settings
+        self.tokenizer = tiktoken.get_encoding(self.settings.OPENAI_TOKENIZER_MODEL)
 
     def chunk_text(self, text: str, max_tokens: int) -> Dict[str, List] :
         """
@@ -25,5 +24,3 @@ class Tokenizer :
     def tokenize_text(self, text: str) -> int :
         tokens = self.tokenizer.encode(text)
         return len(tokens)
-
-openai_tokenizer = Tokenizer()

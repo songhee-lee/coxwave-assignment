@@ -1,6 +1,6 @@
 from pydantic_settings import BaseSettings
 
-class Settings(BaseSettings):
+class OpenAISettings(BaseSettings):
     OPENAI_API_KEY: str
     
     OPENAI_TOKENIZER_MODEL : str
@@ -14,5 +14,3 @@ class Settings(BaseSettings):
     class Config:
         env_file = ".env"
         extra = "ignore"
-
-openai_settings = Settings()

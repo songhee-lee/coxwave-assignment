@@ -2,15 +2,26 @@ import os
 import pickle
 import chromadb
 from typing import List
+from chromadb import Client, Collection
 
 from server.library.naver_store_faq import make_document
-from server.db.chromadb.config import chromadb_settings
-from server.llm.openai.services.embedding import text_to_embedding
+from server.db.chromadb.config import ChromaDBSettings
+from server.llm.openai.services.embedding import EmbeddingService
 
-class DataBase :
+class ChromaDB :
     """
     ChromaDB 데이터베이스 클래스
     """
+    def __init__(self, 
+            settings: ChromaDBSettings, 
+            client: Client, 
+            embedding_service : EmbeddingService
+    ) :
+        self.settings = settings
+        self.client = client
+        self.embedding_service = embedding_service
+        self.collection : Collection = None
+
     def load_data(self, file_path) :
         if os.path.exists(file_path) :
             with open(file_path, "rb") as f :
@@ -35,16 +46,16 @@ class DataBase :
         """
 
         # ChromaDB 클라이언트 설정
-        print(chromadb_settings.CHROMADB_PATH)
-        client = chromadb.PersistentClient(path=chromadb_settings.CHROMADB_PATH)
+        print(self.settings.CHROMADB_PATH)
+        
         try :
-            self.collection = client.get_collection(collection_name)
+            self.collection = self.client.get_collection(collection_name)
             print(f"Load {collection_name}...")
         
         except Exception :
             print(f"Create {collection_name}...")
-            self.collection = client.create_collection(collection_name)
-            collection_info = chromadb_settings.get_collection_info(collection_name)
+            self.collection = self.client.create_collection(collection_name)
+            collection_info = self.settings.get_collection_info(collection_name)
 
             # 기존에 저장된 collection이 있는지 확인하기
             collection_data = self.load_data(collection_info.COLLECTION_PATH)
@@ -62,14 +73,14 @@ class DataBase :
             embeddings = []
             ids = []
             
-            dir_path = f"{chromadb_settings.CHROMADB_PATH}/document"
+            dir_path = f"{self.settings.CHROMADB_PATH}/document"
             if not os.path.exists(dir_path) :
                 os.mkdir(dir_path)
                 print(f"Make dir '{dir_path}'")
                 
             for idx, (key, value) in enumerate(data.items()):
                 # document file 확인하기 (기존 임베딩)
-                file_path = f"{chromadb_settings.CHROMADB_PATH}/document/document_{idx}.pkl"
+                file_path = f"{self.settings.CHROMADB_PATH}/document/document_{idx}.pkl"
                     
                 doc = self.load_data(file_path)
                 if doc :
@@ -78,7 +89,7 @@ class DataBase :
                 # 새롭게 임베딩 진행
                 else :
                     text = make_document(key, value)
-                    embedding = text_to_embedding(text)
+                    embedding = self.embedding_service.text_to_embedding(text)
 
                     with open(file_path, "wb") as f :
                         pickle.dump({"text" : text, "embedding" : embedding}, f)
@@ -101,10 +112,7 @@ class DataBase :
         """
         self.load_database(collection_name)
 
-        query_embedding = text_to_embedding(query)
+        query_embedding = self.embedding_service.text_to_embedding(query)
         result = self.collection.query(query_embeddings=[query_embedding], n_results=1)
         print(result)
         return [doc[0] for doc in result["documents"]]
-
-# DB 인스턴스 생성 및 데이터베이스 로드
-chroma_db = DataBase()

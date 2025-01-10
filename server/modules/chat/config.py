@@ -4,7 +4,7 @@ from pydantic_settings import BaseSettings
 from dotenv import load_dotenv
 load_dotenv()
 
-class Settings(BaseSettings) :
+class ChatSettings(BaseSettings) :
     SYSTEM_PROMPT_PATH : str = Field(env="SYSTEM_PROMPT_PATH")
     RAG_PROMPT_PATH : str = Field(env="RAG_PROMPT_PATH")
 
@@ -28,5 +28,3 @@ class Settings(BaseSettings) :
     class Config:
         env_file = ".env"
         extra = "ignore"
-
-chat_settings = Settings()
