@@ -1,0 +1,57 @@
+# Same as Black
+line-length = 120
+indent-width = 4
+
+# Python version
+target-version = "py312"
+
+# 제외 디렉토리
+exclude = [
+    ".bzr",
+    ".direnv",
+    ".eggs",
+    ".git",
+    ".git-rewrite",
+    ".hg",
+    ".mypy_cache",
+    ".nox",
+    ".pants.d",
+    ".pytype",
+    ".ruff_cache",
+    ".svn",
+    ".tox",
+    ".venv",
+    "__pypackages__",
+    "_build",
+    "buck-out",
+    "build",
+    "dist",
+    "node_modules",
+]
+
+
+[lint]
+# https://docs.astral.sh/ruff/rules/ 참고
+# E: pycodestyle 오류 (PEP 8 스타일 가이드)
+# F: 일반적인 Python 코드 오류
+# I: 임포트 관련 규칙 검사
+# W: 잠재적인 경고를 생성할 수 있는 요소
+# N: pep8-naming (이름 지정 규칙)
+# B: flake8-bugbear (추가적인 버그 및 디자인 문제 검출)
+# C90: 코드의 복잡도와 관련된 문제 검사
+
+
+select = ["E", "F", "I", "W", "N", "B", "C90"]  
+ignore = []
+
+# 밑줄로 시작하는 미사용 변수를 허용
+dummy-variable-rgx = "^(_+|(_+[a-zA-Z0-9_]*[a-zA-Z0-9]+?))$"
+
+
+[format]
+quote-style = "double"
+indent-style = "space"
+skip-magic-trailing-comma = false
+line-ending = "auto"
+docstring-code-format = false
+docstring-code-line-length = "dynamic"
