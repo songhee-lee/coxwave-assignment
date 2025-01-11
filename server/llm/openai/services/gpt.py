@@ -7,7 +7,9 @@ from openai import OpenAI
 from server.llm.openai.config import OpenAISettings
 from server.llm.openai.schemas.gpt_answer import StructuredOutput
 from server.llm.openai.utils.gpt_answer import format_response
+from server.core.logging.config import setup_logging
 
+logger = setup_logging(__name__)
 
 class OpenAILLM:
     def __init__(
@@ -27,8 +29,10 @@ class OpenAILLM:
         try:
             # TODO: The resource 'Engine' has been deprecated
             # openai.Engine.list()
+            logger.info(f"Success to set an api key for OpenAI.")
             return True
         except openai.AuthenticationError:
+            logger.error(f"Failed to set an api key for OpenAI.")
             return False
 
     def generate(self, messages: List[Dict[str, Any]]) -> str:
@@ -36,7 +40,7 @@ class OpenAILLM:
         response = self.client.chat.completions.create(
             model=self.settings.OPENAI_LLM_MODEL, messages=messages
         )
-
+        logger.info(f"Success to get a response from openai.\n{response}")
         return response.choices[0].message.content
 
     async def generate_streaming(self, messages: List[Dict[str, Any]]) -> str:
@@ -58,7 +62,8 @@ class OpenAILLM:
             messages=messages,
             response_format=StructuredOutput,
         )
-
+        logger.info(f"Success to get a response from openai.\n{response}")
+        
         response = format_response(response.choices[0].message.parsed)
 
         for chunk in response:

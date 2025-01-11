@@ -3,7 +3,9 @@ from typing import Any, Dict, List
 from server.db.chromadb.services.database import ChromaDB
 from server.llm.openai.services.gpt import OpenAILLM
 from server.modules.chat.config import ChatSettings
+from server.core.logging.config import setup_logging
 
+logger = setup_logging(__name__)
 
 def organize_messages(
     collection_name: str,
@@ -24,6 +26,8 @@ def organize_messages(
     messages[-1]["content"] = (
         f"{settings.rag_prompt}\nContext: {context}\nQuery: {messages[-1]['content']}"
     )
+
+    logger.debug("Success to organize the messages\n{messages}")
     return messages
 
 

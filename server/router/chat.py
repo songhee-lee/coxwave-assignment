@@ -7,6 +7,9 @@ from server.llm.openai.services import OpenAILLM
 from server.modules.chat import ChatSettings
 from server.modules.chat.schemas import ChatRequest, ChatResponse
 from server.modules.chat.services import get_chat_response
+from server.core.logging.config import setup_logging
+
+logger = setup_logging(__name__)
 
 router = APIRouter()
 
@@ -29,6 +32,7 @@ async def chat(
         )
         return {"taskId": request.task_id, "generated_text": generated_text}
     except Exception as e:
+        logger.error(f"Failed get_chat_resonse : {str(e)}")
         return {"taskId": request.task_id, "error": str(e)}
 
 
@@ -52,4 +56,5 @@ async def chat_stream(
         return StreamingResponse(response_stream, media_type="text/plain")
 
     except Exception as e:
+        logger.error(f"Failed get_chat_resonse : {str(e)}")
         return {"taskId": request.task_id, "error": str(e)}

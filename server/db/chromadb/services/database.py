@@ -7,7 +7,9 @@ from chromadb import Client, Collection
 from server.db.chromadb.config import ChromaDBSettings
 from server.library.naver_store_faq import make_document
 from server.llm.openai.services.embedding import EmbeddingService
+from server.core.logging.config import setup_logging
 
+logger = setup_logging(__name__)
 
 class ChromaDB:
     """
@@ -28,7 +30,9 @@ class ChromaDB:
     def load_data(self, file_path):
         if os.path.exists(file_path):
             with open(file_path, "rb") as f:
+                logger.debug(f"Find and read the {file_path}.")
                 return pickle.load(f)
+        logger.error(f"There is no {file_path}.")
         return False
 
     def add_to_chromadb(
@@ -47,21 +51,21 @@ class ChromaDB:
         """
 
         # ChromaDB 클라이언트 설정
-        print(self.settings.CHROMADB_PATH)
+        logger.debug(f"ChromaDB path : {self.settings.CHROMADB_PATH}.")
 
         try:
             self.collection = self.client.get_collection(collection_name)
-            print(f"Load {collection_name}...")
+            logger.debug(f"Load {collection_name}...")
 
         except Exception:
-            print(f"Create {collection_name}...")
+            logger.debug(f"Create {collection_name}...")
             self.collection = self.client.create_collection(collection_name)
             collection_info = self.settings.get_collection_info(collection_name)
 
             # 기존에 저장된 collection이 있는지 확인하기
             collection_data = self.load_data(collection_info.COLLECTION_PATH)
             if collection_data:
-                print("기존 DB 로딩...")
+                logger.debug("기존 DB 로딩...")
                 self.add_to_chromadb(
                     collection_data["documents"],
                     collection_data["embeddings"],
@@ -69,7 +73,7 @@ class ChromaDB:
                 )
 
             # 새로운 collection에 임베딩 데이터 추가하기
-            print(f"Load the data from '{collection_info.FILE_PATH}'")
+            logger.debug(f"Load the data from '{collection_info.FILE_PATH}'")
 
             # 파일 경로에서 데이터 불러오기
             data = self.load_data(collection_info.FILE_PATH)
@@ -81,7 +85,7 @@ class ChromaDB:
             dir_path = f"{self.settings.CHROMADB_PATH}/document"
             if not os.path.exists(dir_path):
                 os.mkdir(dir_path)
-                print(f"Make dir '{dir_path}'")
+                logger.debug(f"Make dir '{dir_path}'")
 
             for idx, (key, value) in enumerate(data.items()):
                 # document file 확인하기 (기존 임베딩)
@@ -103,7 +107,7 @@ class ChromaDB:
                 embeddings.append(embedding)
                 ids.append(str(idx))
 
-            print("새로운 DB 생성...")
+            logger.debug("새로운 DB 생성...")
             self.add_to_chromadb(documents, embeddings, ids)
 
             # DB 저장하기
@@ -121,5 +125,5 @@ class ChromaDB:
 
         query_embedding = self.embedding_service.text_to_embedding(query)
         result = self.collection.query(query_embeddings=[query_embedding], n_results=3)
-        print(result)
+        logger.debug(f"RAG results:\n{result}")
         return [doc[0] for doc in result["documents"]]
