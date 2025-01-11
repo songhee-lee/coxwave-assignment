@@ -1,12 +1,17 @@
 [project]
 name = "coxwave"
 version = "1.0"
-description = "coxwvae-assignment"
+description = "coxwave-assignment"
 authors = [
-    {name = "songhee-lee"}
+    {name = "songhee"}
+]
+packages = [
+    {include = "client"},
+    {include = "db"},
+    {include = "server"}
 ]
 readme = "README.md"
-requires-python = "3.12.8"
+requires-python = ">=3.12, <4.0"
 dependencies = [
     "fastapi (>=0.115.6,<0.116.0)",
     "uvicorn (>=0.34.0,<0.35.0)",
@@ -17,15 +22,11 @@ dependencies = [
     "pydantic-settings (>=2.7.1,<3.0.0)",
     "python-dotenv (>=1.0.1,<2.0.0)",
     "tiktoken (>=0.8.0,<0.9.0)",
-    "tokenizers (>=0.21.0,<0.22.0)"
+    "tokenizers (>=0.21.0,<0.22.0)",
+    "bson (>=0.5.10,<0.6.0)"
 ]
-
+package-mode = false
 
 [build-system]
 requires = ["poetry-core>=2.0.0,<3.0.0"]
 build-backend = "poetry.core.masonry.api"
-
-[tool.poetry.group.dev.dependencies]
-ruff = "^0.9.0"
-pre-commit = "^4.0.1"
-
