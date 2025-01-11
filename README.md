@@ -1,3 +1,30 @@
+# 코드 실행
+
+1. git clone
+2. .env 파일 추가
+3. 실행
+
+```shell
+poetry install --no-root
+poetry env activate
+
+# 서버 실행
+poetry run uvicorn server.main:app --host 127.0.0.1 --port 8000 --reload
+
+# 클라이언트 실행
+poetry run streamlit run client/streamlit_app.py
+```
+
+
+
+
+
+
+
+
+
+# * 과제 설명
+
 # 1. 목표
 
 - 네이버 스마트 스토어의 자주 묻는 질문(FAQ)을 기반으로 질의응답하는 챗봇 만들기
