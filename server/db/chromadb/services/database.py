@@ -120,6 +120,6 @@ class ChromaDB:
         self.load_database(collection_name)
 
         query_embedding = self.embedding_service.text_to_embedding(query)
-        result = self.collection.query(query_embeddings=[query_embedding], n_results=1)
+        result = self.collection.query(query_embeddings=[query_embedding], n_results=3)
         print(result)
         return [doc[0] for doc in result["documents"]]
