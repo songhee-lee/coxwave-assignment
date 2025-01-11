@@ -4,7 +4,7 @@ from config import settings
 
 
 def send_api(data, path):
-    url = settings.API_HOST + f"/{path}"
+    url = settings.API_HOST + f"{path}"
     headers = {"Content-Type": "application/json", "accept": "application/json"}
 
     try:

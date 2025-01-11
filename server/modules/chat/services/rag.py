@@ -14,7 +14,7 @@ def organize_messages(
     """NOTE : 사용자 메세지에 시스템 메세지와 RAG 후 context 추가하기"""
 
     # 1) 시스템 프롬프트 추가하기
-    messages[0]["content"] = settings.SYSTEM_PROMPT
+    messages[0]["content"] = settings.system_prompt
 
     # 2) RAG - context 찾아서 마지막 메세지에 추가하기
     query = messages[-1]["content"]
@@ -22,7 +22,7 @@ def organize_messages(
     context = "\n".join(contexts)
 
     messages[-1]["content"] = (
-        f"{settings.RAG_PROMPT}\nContext: {context}\nQuery: {messages[-1]['content']}"
+        f"{settings.rag_prompt}\nContext: {context}\nQuery: {messages[-1]['content']}"
     )
     return messages
 

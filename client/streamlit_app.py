@@ -28,13 +28,12 @@ if prompt := st.chat_input("궁금한 점을 입력해주세요."):
     with st.spinner("Generating the answer..."):
         data = {
             "service": "naver_store_faq",
-            "taskId": st.session_state.taskId,
+            "task_id": st.session_state.taskId,
             "messages": st.session_state.messages,
         }
 
         try:
             response = send_api(data, "/api/chat_stream")
-            response.raise_for_status()  # HTTP Error Check
 
             # 스트리밍 출력
             with st.chat_message("assistant"):
